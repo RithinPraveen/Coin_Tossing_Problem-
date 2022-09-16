@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        coin = ["Head", "Tail"]
+
+        function coinTossing() {
+            compCoinTossing = []
+            plyrCoinTossing = []
+            coinTossingOfPlayerAndComputer = {}
+            for (let i = 0; i < 10; i++) {
+                comp = coin[Math.round(Math.random())]
+                plyr = coin[Math.round(Math.random())]
+                compCoinTossing.push(comp)
+                plyrCoinTossing.push(plyr)
+            }
+            console.log("");
+            computerPoint = compCoinTossing.filter(n => n == "Head").length
+            playerPoint = plyrCoinTossing.filter(n => n == "Head").length
+
+            coinTossingOfPlayerAndComputer["Computer"] = computerPoint
+            coinTossingOfPlayerAndComputer["Player"] = playerPoint
+
+            return (compCoinTossing, plyrCoinTossing, computerPoint, playerPoint, coinTossingOfPlayerAndComputer)
+
+        }
+
+
+
+        function totalRoundWiner() {
+            totalTable = []
+            totalCoinTossing = []
+            totalPointsOfPlayerAndComputer = {}
+            totalWinTable = []
+            roundNo = []
+            rounds = 0
+            for (let j = 0; j < 4; j++) {
+                noOfRounds = { "Round": j + 1 }
+                coinTossing()
+
+                roundNo.push(noOfRounds)
+                totalTable.push(noOfRounds, coinTossingOfPlayerAndComputer)
+                totalCoinTossing.push(coinTossingOfPlayerAndComputer)
+
+            }
+            
+
+            for (i = 0; i < roundNo.length; i++) {
+                for (j = 0; j < totalCoinTossing.length; j++) {
+                    if (i == j) {
+                        (totalCoinTossing[j]["round"] = roundNo[i].Round)
+                    }
+                }
+            }
+
+            totalComputerPoints = (totalCoinTossing.reduce((a, b) => a + b.Computer, 0))
+            totalPlayerPoints = (totalCoinTossing.reduce((a, b) => a + b.Player, 0))
+
+            totalPointsOfPlayerAndComputer["TotalComputer"] = totalComputerPoints
+            totalPointsOfPlayerAndComputer["TotalPlayer"] = totalPlayerPoints
+
+            totalWinTable.push(totalPointsOfPlayerAndComputer)
+
+            return (totalTable, totalCoinTossing, totalPointsOfPlayerAndComputer, totalWinTable, roundNo)
+        }
+
+        function finalWiner() {
+            if (totalComputerPoints > totalPlayerPoints) {
+                console.log(`🏆🏆🏆🏆 Coin Tossing Winner is COMPUTER 🏆🏆🏆🏆`);
+            } else if (totalComputerPoints < totalPlayerPoints) {
+                console.log(`🏆🏆🏆🏆 Coin Tossing Winner is PLAYER 🏆🏆🏆🏆`);
+            } else {
+                console.log(`🏆🏆🏆🏆 Coin Tossing Is a Draw 🏆🏆🏆🏆`);
+            }
+        }
+
+        function roundWinner() {
+            if (computerPoint > playerPoint) {
+                console.log(`🌟🌟🌟🌟🌟🌟🌟🥇 Winner Computer 🥇🌟🌟🌟🌟🌟🌟🌟`);
+            } else if (computerPoint < playerPoint) {
+                console.log(`🌟🌟🌟🌟🌟🌟🌟🥇 Winner Player 🥇🌟🌟🌟🌟🌟🌟🌟`);
+            } else {
+                console.log(`🌟🌟🌟🌟🌟🌟🌟 Its a Draw 🌟🌟🌟🌟🌟🌟🌟`);
+            }
+
+        }
+
+        function roundsPlayed() {
+            let counting = 0
+            let intervals = setInterval(() => {
+                coinTossing()
+                console.log(`🔷 Tossing ${counting + 1} `);
+                console.log(`▶️ Computer got 🪙${compCoinTossing[counting]}🪙 ➖ Player got 🪙${plyrCoinTossing[counting]}🪙`)
+                counting++
+                if (counting == 10) {
+                    clearInterval(intervals)
+                    setTimeout(() => {
+                        console.log("-----------------------------------------");
+                        console.log(`Computer points ${computerPoint}`)
+                        console.log(`Player points ${playerPoint}`)
+                        roundWinner()
+
+                        console.log("");
+                    }, 5000);
+                }
+            }, 1000);
+        }
+
+        function numberOfRounds() {
+            console.log(`🔰🔰🔰🔰🔰🔰🔰🔰🔰 ROUND 1 🔰🔰🔰🔰🔰🔰🔰🔰🔰`);
+            roundsPlayed()
+            let counting = 1
+            let intervals = setInterval(() => {
+                roundsPlayed()
+                counting++
+                console.log(`🔰🔰🔰🔰🔰🔰🔰🔰🔰 ROUND ${counting} 🔰🔰🔰🔰🔰🔰🔰🔰🔰`);
+                if (counting == 4) {
+                    clearInterval(intervals)
+                    setTimeout(() => {
+                        totalRoundWiner()
+                        console.table(totalPointsOfPlayerAndComputer)
+                        finalWiner()
+
+                    }, 15500);
+                }
+            }, 15100);
+        }
+
+        numberOfRounds()
+
+        totalRoundWiner()
+
+        sc = ""
+        sc += "Round" + " ," + "Computer Points" + " , " + "Player Points"
+        sc += "\r\n"
+        for (i of totalCoinTossing) {
+
+            sc += i.round + "," + i.Computer + "," + i.Player + ","
+            sc += "\r\n"
+
+        }
+        // console.log(totalWinTable);
+        sc += "\r\n"
+        sc += "Total" + ","+"Total Computer Points" + "," + "Total Player Points"
+        sc += "\r\n"
+        for (i of totalWinTable) {
+
+            sc +="Total points" + ","+ i.TotalComputer + "," + i.TotalPlayer + ","
+            sc += "\r\n"
+
+        }
+
+        if (totalComputerPoints > totalPlayerPoints) {
+            winner = (" Coin Tossing Winner is COMPUTER ");
+        } else if (totalComputerPoints < totalPlayerPoints) {
+            winner = (" Coin Tossing Winner is PLAYER ");
+        } else {
+            winner = (" Coin Tossing Is a Draw ");
+        }
+        sc += "\r\n"
+        sc += (winner);
+
+        let tempblob = new Blob([sc], { type: "text\csv" })
+        let tempURL = window.URL.createObjectURL(tempblob)
+        let activation = document.createElement("a")
+        activation.href = tempURL
+
+        activation.download = "Coin_Tossing.csv"
+
+        activation.click()
+        window.URL.revokeObjectURL(tempURL)
+        activation.remove()
+
+    </script>
+</body>
+
+</html>
